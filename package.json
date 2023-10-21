@@ -1,0 +1,16 @@
+{
+  "name": "chess",
+  "version": "1.0.0",
+  "description": "online chess game",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm install",
+    "start": "node index.js"
+  },
+  "author": "Cole Bechtel",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.14.1"
+  }
+}
