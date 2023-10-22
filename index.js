@@ -141,11 +141,16 @@ wss.on('connection', ws => {
         }
 
         else if(content.type === 'move'){
-            if(ws === games[content.code]['players'][0]){
-                games[content.code]['players'][1].send(JSON.stringify(content));
+            try{
+                if(ws === games[content.code]['players'][0]){
+                    games[content.code]['players'][1].send(JSON.stringify(content));
+                }
+                else{
+                    games[content.code]['players'][0].send(JSON.stringify(content));
+                }
             }
-            else{
-                games[content.code]['players'][0].send(JSON.stringify(content));
+            catch{
+                console.log("ignored error");
             }
         }
 
