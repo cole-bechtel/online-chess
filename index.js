@@ -1,6 +1,13 @@
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({port: process.env.PORT || 8080});
+const express = require('express');
+const app = express();
+console.log(typeof app)
+
+app.get('/ping', (req, res) => {
+  res.send('Pong');
+});
 
 let games = {}
 let clients = [];
@@ -19,11 +26,18 @@ function createCode(length){
     return code;
 }
 
+let pingTime = 60000;
+
 wss.on('listening', () => {
     console.log('WebSocket server is listening on port 8080');
 });
 
 wss.on('connection', ws => {
+    const pingTimer = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.ping();
+        }
+    }, pingTime);
     console.log('New client connected!');
     clients.push(ws);
     let message = {
