@@ -7,8 +7,6 @@ setTimeout(() => {
         socket.send('ping');
     }, 600000);
 }, 100000)
-//const express = require('express');
-//const app = express();
 
 let games = {}
 let clients = [];
@@ -27,18 +25,11 @@ function createCode(length){
     return code;
 }
 
-let pingTime = 60000;
-
 wss.on('listening', () => {
     console.log('WebSocket server is listening on port 8080');
 });
 
 wss.on('connection', ws => {
-    const pingTimer = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.ping();
-        }
-    }, pingTime);
     console.log('New client connected!');
     clients.push(ws);
     let message = {
@@ -196,6 +187,24 @@ wss.on('connection', ws => {
             }
             delete games[code];
         }
+
+        else if(content.type === 'resignation'){
+            console.log('Player resigned!')
+            for(let [code, values] of Object.entries(games)){
+                let ind = values['players'].indexOf(ws)
+                if(ind !== -1){
+                    let message = {
+                        type: 'opponent-resigned'
+                    };
+                    if(ind === 0){
+                        values['players'][1].send(JSON.stringify(message));
+                    }
+                    else{
+                        values['players'][0].send(JSON.stringify(message));
+                    }   
+                }
+            }
+        }
     });
     ws.on('close', () => {
         for(let [code, values] of Object.entries(games)){
@@ -208,7 +217,7 @@ wss.on('connection', ws => {
                     values['players'][1].send(JSON.stringify(message));
                 }
                 else{
-                    values['players'][0 ].send(JSON.stringify(message));
+                    values['players'][0].send(JSON.stringify(message));
                 }   
             }
         }
