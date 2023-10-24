@@ -1,13 +1,14 @@
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({port: process.env.PORT || 8080});
-const express = require('express');
-const app = express();
-console.log(typeof app)
-
-app.get('/ping', (req, res) => {
-  res.send('Pong');
-});
+setTimeout(() => {
+    const socket = new WebSocket('wss://online-chess-yp5s.onrender.com');
+    setInterval(function() {
+        socket.send('ping');
+    }, 600000);
+}, 100000)
+//const express = require('express');
+//const app = express();
 
 let games = {}
 let clients = [];
